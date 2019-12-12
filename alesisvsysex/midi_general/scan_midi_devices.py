@@ -2,38 +2,43 @@ import sys
 
 import rtmidi
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QHBoxLayout
-
-midiout = rtmidi.MidiOut()
+from alesisvsysex.ui.window import AlesisVSysexApplication
 
 
 class ScanMidiDevices(QWidget):
     def __init__(self):
         super().__init__()
-        self.title = 'Hello, world!'
-        # self.left = 10
-        # self.top = 10
-        # self.width = 640
-        # self.height = 480
+        self.midiout = rtmidi.MidiOut()
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle(self.title)
+        self.setWindowTitle('Midi Scan')
         layout = QHBoxLayout()
 
         self.cb = QComboBox()
-        self.cb.addItems(midiout.get_ports())
+        self.cb.addItems(self.midiout.get_ports())
         layout.addWidget(self.cb)
 
-        self.button = QPushButton('Reload', self)
-        self.button.setToolTip('Reload visible midi controller')
-        layout.addWidget(self.button)
+        self.button_reload = QPushButton('Reload', self)
+        self.button_reload.setToolTip('Reload visible midi controller')
+        self.button_reload.clicked.connect(self.click_reload)
+        layout.addWidget(self.button_reload)
 
-        self.button = QPushButton('Connect', self)
-        self.button.setToolTip('Connect to selected midi device')
-        layout.addWidget(self.button)
+        self.button_connect = QPushButton('Connect', self)
+        self.button_connect.setToolTip('Connect to selected midi device')
+        self.button_connect.clicked.connect(self.click_connect)
+        layout.addWidget(self.button_connect)
 
         self.setLayout(layout)
         self.show()
+
+    def click_reload(self):
+        self.cb.clear()
+        self.cb.addItems(self.midiout.get_ports())
+
+    def click_connect(self):
+        selected_midi_controller = self.cb.currentText()
+        AlesisVSysexApplication()
 
 
 if __name__ == '__main__':
