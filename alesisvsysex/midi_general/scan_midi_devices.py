@@ -2,6 +2,8 @@ import sys
 
 import rtmidi
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QHBoxLayout
+from alesisvsysex.device.alesis import AlesisV25Device
+
 from alesisvsysex.ui.window import AlesisVSysexApplication
 
 
@@ -38,7 +40,10 @@ class ScanMidiDevices(QWidget):
 
     def click_connect(self):
         selected_midi_controller = self.cb.currentText()
-        AlesisVSysexApplication()
+        AlesisV25Device._PORT_PREFIX = selected_midi_controller
+
+        alesis_app = AlesisVSysexApplication()
+        alesis_app.show()
 
 
 if __name__ == '__main__':
