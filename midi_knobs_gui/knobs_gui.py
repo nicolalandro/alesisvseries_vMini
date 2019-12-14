@@ -14,6 +14,16 @@ class KnobGui(QWidget):
         self.port = None
         self.initUI()
 
+        # create
+        self.simulRunner = SimulRunner()
+        self.simulThread = QThread()
+        self.simulRunner.moveToThread(self.simulThread)
+
+        # start and listen
+        self.simulThread.start()
+        self.simulThread.started.connect(self.simulRunner.longRunning)
+        self.simulRunner.stepIncreased.connect(self.knob_update)
+
     def initUI(self):
         self.setWindowTitle('Midi Scan')
         layout = QVBoxLayout()
@@ -69,21 +79,12 @@ class KnobGui(QWidget):
 
     def click_disconnect(self):
         # self.port.close()
-        pass
+        self.simulRunner._isRunning = False
 
     def click_connect(self):
         selected_midi_controller = self.cb.currentText()
         # self.port = mido.open_ioport(selected_midi_controller)
-
-        # create
-        self.simulRunner = SimulRunner()
-        self.simulThread = QThread()
-        self.simulRunner.moveToThread(self.simulThread)
-
-        # start and listen
-        self.simulThread.start()
-        self.simulThread.started.connect(self.simulRunner.longRunning)
-        self.simulRunner.stepIncreased.connect(self.knob_update)
+        self.simulRunner._isRunning = True
 
     def knob_update(self, value):
         self.progress_bar.setValue(value)
