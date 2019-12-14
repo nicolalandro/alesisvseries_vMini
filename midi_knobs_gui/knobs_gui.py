@@ -1,10 +1,6 @@
-import os
-import sys
-from asyncio import async
-
 import mido
 import rtmidi
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QSpinBox, QGroupBox, \
+from PyQt5.QtWidgets import QWidget, QPushButton, QComboBox, QSpinBox, QGroupBox, \
     QFormLayout, QLabel, QVBoxLayout, QProgressBar
 
 
@@ -77,9 +73,3 @@ class KnobGui(QWidget):
 
     def knob_update(self, value):
         self.progress_bar.setValue(value)
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = KnobGui()
-    sys.exit(app.exec_())
