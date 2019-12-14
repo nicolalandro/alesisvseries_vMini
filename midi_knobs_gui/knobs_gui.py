@@ -79,12 +79,12 @@ class KnobGui(QWidget):
 
     def click_disconnect(self):
         # self.port.close()
-        self.simulRunner._isRunning = False
+        self.simulRunner.stop()
 
     def click_connect(self):
         selected_midi_controller = self.cb.currentText()
         # self.port = mido.open_ioport(selected_midi_controller)
-        self.simulRunner._isRunning = True
+        self.simulRunner.start()
 
     def knob_update(self, value):
         self.progress_bar.setValue(value)
