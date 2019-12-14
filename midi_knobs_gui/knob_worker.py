@@ -1,4 +1,4 @@
-import time
+import os
 
 import mido
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -20,14 +20,10 @@ class SimulRunner(QObject):
         while True:
             QApplication.processEvents()
             if self._isRunning == True:
-                print('if')
                 r = self.midi_device.receive()
                 if r.type == 'control_change' and r.channel == self.channel and r.control == self.control:
-                    print(r.value)
                     self.stepIncreased.emit(r.value)
-                # time.sleep(0.1)
-            else:
-                print('else')
+                    os.system(('pactl set-sink-volume 0 %d' % r.value) + '%')
 
     def start(self, name, channel, control):
         self.midi_device = mido.open_ioport(name)
