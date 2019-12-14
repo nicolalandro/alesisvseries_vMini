@@ -1,7 +1,10 @@
 import mido
 import rtmidi
+from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QWidget, QPushButton, QComboBox, QSpinBox, QGroupBox, \
     QFormLayout, QLabel, QVBoxLayout, QProgressBar
+
+from midi_knobs_gui.knob_worker import SimulRunner
 
 
 class KnobGui(QWidget):
@@ -65,11 +68,22 @@ class KnobGui(QWidget):
         return form_group
 
     def click_disconnect(self):
-        self.port.close()
+        # self.port.close()
+        pass
 
     def click_connect(self):
         selected_midi_controller = self.cb.currentText()
-        self.port = mido.open_ioport(selected_midi_controller)
+        # self.port = mido.open_ioport(selected_midi_controller)
+
+        # create
+        self.simulRunner = SimulRunner()
+        self.simulThread = QThread()
+        self.simulRunner.moveToThread(self.simulThread)
+
+        # start and listen
+        self.simulThread.start()
+        self.simulThread.started.connect(self.simulRunner.longRunning)
+        self.simulRunner.stepIncreased.connect(self.knob_update)
 
     def knob_update(self, value):
         self.progress_bar.setValue(value)
