@@ -61,13 +61,14 @@ class KnobGui(QWidget):
         form_group = QGroupBox("Knob")
         layout = QFormLayout()
 
-        channel = QSpinBox()
-        channel.setToolTip('Midi knob channel')
-        layout.addRow(QLabel("Channel:"), channel)
+        self.channel = QSpinBox()
+        self.channel.setToolTip('Midi knob channel')
+        layout.addRow(QLabel("Channel:"), self.channel)
 
-        control = QSpinBox()
-        control.setToolTip('Midi knob control')
-        layout.addRow(QLabel("Control:"), control)
+        self.control = QSpinBox()
+        self.control.setToolTip('Midi knob control')
+        self.control.setValue(14)
+        layout.addRow(QLabel("Control:"), self.control)
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setToolTip('Value')
@@ -79,12 +80,16 @@ class KnobGui(QWidget):
 
     def click_disconnect(self):
         # self.port.close()
-        self.simulRunner.stop()
+        self.simulRunner._isRunning = False
 
     def click_connect(self):
         selected_midi_controller = self.cb.currentText()
-        # self.port = mido.open_ioport(selected_midi_controller)
-        self.simulRunner.start()
+        channel = int(self.channel.value())
+        control = int(self.control.value())
+        self.simulRunner.midi_device = mido.open_ioport(selected_midi_controller)
+        self.simulRunner.channel = channel
+        self.simulRunner.control = control
+        self.simulRunner._isRunning = True
 
     def knob_update(self, value):
         self.progress_bar.setValue(value)
